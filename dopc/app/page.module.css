@@ -2,12 +2,13 @@
   display: flex;
   align-items: center;
   font-family: Nunito Sans;
+  color: var(--color-text);
 }
 
 .main {
   display: flex;
   flex-direction: column;
-  margin: 2rem 5%;
+  margin: 2rem 7%;
 }
 
 .calculatorTile {
@@ -23,7 +24,6 @@
 .title {
   font-size: 2rem;
   font-family: Coiny;
-  color: var(--color-primary);
   margin-bottom: var(--space-md);
   margin-right: 2rem;
 }
@@ -34,15 +34,10 @@
   gap: var(--space-lg);
 }
 
-.detailsWrapper {
+.detailsWrapper, .priceBreakdownWrapper {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-}
-
-.priceBreakdownWrapper {
-  display: flex;
-  flex-direction: column;
 }
 
 .subtitle {
@@ -51,43 +46,66 @@
 }
 
 .inputWrapper {
+  position: relative;
   display: flex;
   flex-direction: column;
+  gap: var(--space-xs);
 }
 
-.input, .selectWrapper {
+.input {
   padding: .75rem .875rem;
   border-radius: var(--border-radius-md);
   border: 2px solid var(--color-border-primary);
   background-color: var(--color-bg);
   font-size: var(--font-size-md);
+  max-width: 40ch;
   transition: border .2s ease, outline .2s ease;
 }
 
-.input:hover, .selectWrapper:hover {
+.input:hover {
   border: 2px solid var(--color-primary);
 }
 
-.input:active, .selectWrapper:active {
-  border: 2px solid var(--color-outline-focused);
+.input:focus {
+  border-color: var(--color-outline-selected);
+  outline: 1px solid var(--color-outline-selected);
+  padding-top: 1.25rem;
+  padding-bottom: .25rem;
 }
 
-.input:focus, .selectWrapper:focus {
-  border: 2px solid var(--color-outline-focused);
-  outline: transparent;
+.input:focus-visible {
+  border-color: var(--color-outline-focused);
+  outline: 1px solid var(--color-outline-focused);
 }
 
-.selectWrapper {
-  display: flex;
-  gap: var(--space-sm);
+.input:focus:hover, .input:focus-visible:hover {
+  border-color: var(--color-primary);
+  outline: 1px solid var(--color-primary);
 }
 
-.select {
-  all: unset;
-  /* Remove default arrow */
-  appearance: none;
-  -moz-appearance:none; /* Firefox */
-  -webkit-appearance:none; /* Safari and Chrome */
+.input:not(:placeholder-shown) {
+  padding-top: 1.25rem;
+  padding-bottom: .25rem;
+}
+
+.innerLabel {
+  position: absolute;
+  font-size: var(--font-size-sm);
+  left: var(--space-md);
+  color: var(--color-text-secondary);
+  transform: translate(0, 1rem);
+  transition: all .2s ease-in-out;
+}
+
+.input:focus ~ .innerLabel, .input:active ~ .innerLabel {
+  transform: translate(0, .5rem);
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+}
+
+.input:not(:placeholder-shown) ~ .innerLabel {
+  transform: translate(0, .5rem);
+  font-size: var(--font-size-xs);
 }
 
 .primaryButton, .secondaryButton {
@@ -113,6 +131,10 @@
   background-color: var(--color-primary-light-pressed);
 }
 
+.secondaryButton:focus-visible, .primaryButton:focus-visible {
+  outline: 2px solid var(--color-outline-focused);
+}
+
 .primaryButton {
   background-color: var(--color-primary);
   color: #fff;
@@ -125,4 +147,19 @@
 
 .primaryButton:active {
   background-color: var(--color-primary-pressed);
+}
+
+.priceBreakdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.priceBreakdownRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.priceBreakdownDescriptionTotal, .priceBreakdownValueTotal {
+  font-weight: var(--font-weight-extrabold);
 }
