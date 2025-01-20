@@ -55,12 +55,48 @@
   flex-direction: column;
 }
 
+.input, .selectWrapper {
+  padding: .75rem .875rem;
+  border-radius: var(--border-radius-md);
+  border: 2px solid var(--color-border-primary);
+  background-color: var(--color-bg);
+  font-size: var(--font-size-md);
+  transition: border .2s ease, outline .2s ease;
+}
+
+.input:hover, .selectWrapper:hover {
+  border: 2px solid var(--color-primary);
+}
+
+.input:active, .selectWrapper:active {
+  border: 2px solid var(--color-outline-focused);
+}
+
+.input:focus, .selectWrapper:focus {
+  border: 2px solid var(--color-outline-focused);
+  outline: transparent;
+}
+
+.selectWrapper {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.select {
+  all: unset;
+  /* Remove default arrow */
+  appearance: none;
+  -moz-appearance:none; /* Firefox */
+  -webkit-appearance:none; /* Safari and Chrome */
+}
+
 .primaryButton, .secondaryButton {
   all: unset;
   cursor: pointer;
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--border-radius-md);
   width: fit-content;
+  font-size: var(--font-size-md);
   transition: all .2s ease;
 }
 

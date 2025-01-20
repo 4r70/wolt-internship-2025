@@ -1,5 +1,6 @@
-import Image from "next/image";
 import styles from "./page.module.css";
+
+import ArrowDownIcon from "@/icons/arrowDown";
 
 export default function Home() {
     return (
@@ -14,28 +15,59 @@ export default function Home() {
                             <h2 className={styles.subtitle}>Details</h2>
                             <div className={styles.inputWrapper}>
                                 <label htmlFor="venue-slug">Venue slug</label>
-                                <input id="venue-slug" type="text" />
+                                <div className={styles.selectWrapper}>
+                                    <select
+                                        id="venue-slug"
+                                        className={styles.select}
+                                    >
+                                        <option value="home-assignment-venue-tallinn">
+                                            home-assignment-venue-tallinn
+                                        </option>
+                                        <option value="home-assignment-venue-helsinki">
+                                            home-assignment-venue-helsinki
+                                        </option>
+                                    </select>
+                                    <ArrowDownIcon
+                                        className={styles.arrowDownIcon}
+                                    />
+                                </div>
                             </div>
                             <div className={styles.inputWrapper}>
                                 <label htmlFor="cart-value">
                                     Cart value (EUR)
                                 </label>
-                                <input id="cart-value" type="number" />
+                                <input
+                                    id="cart-value"
+                                    type="number"
+                                    className={styles.input}
+                                />
                             </div>
                             <div className={styles.inputWrapper}>
                                 <label htmlFor="user-latitude">
                                     User latitude
                                 </label>
-                                <input id="user-latitude" type="number" />
+                                <input
+                                    id="user-latitude"
+                                    type="number"
+                                    className={styles.input}
+                                />
                             </div>
                             <div className={styles.inputWrapper}>
                                 <label htmlFor="user-longitude">
                                     User longitude
                                 </label>
-                                <input id="user-longitude" type="number" />
+                                <input
+                                    id="user-longitude"
+                                    type="number"
+                                    className={styles.input}
+                                />
                             </div>
-                            <button className={styles.secondaryButton}>Get location</button>
-                            <button className={styles.primaryButton}>Calculate delivery price</button>
+                            <button className={styles.secondaryButton}>
+                                Get location
+                            </button>
+                            <button className={styles.primaryButton}>
+                                Calculate delivery price
+                            </button>
                         </div>
                         <div className={styles.priceBreakdownWrapper}>
                             <h2 className={styles.subtitle}>Price breakdown</h2>
