@@ -22,7 +22,8 @@
 }
 
 .title {
-  font-size: 2rem;
+  font-size: 1.5rem;
+  font-size: clamp(1.5rem, 1.4rem + 0.5vw, 2rem);
   font-family: Coiny;
   margin-bottom: var(--space-md);
   margin-right: 2rem;
@@ -42,7 +43,13 @@
 
 .subtitle {
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.inputRow {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
 }
 
 .inputWrapper {
@@ -59,6 +66,7 @@
   background-color: var(--color-bg);
   font-size: var(--font-size-md);
   max-width: 40ch;
+  width: 100%;
   transition: border .2s ease, outline .2s ease;
 }
 
@@ -89,6 +97,7 @@
 }
 
 .innerLabel {
+  pointer-events: none;
   position: absolute;
   font-size: var(--font-size-sm);
   left: var(--space-md);
@@ -121,6 +130,7 @@
 .secondaryButton {
   background-color: var(--color-primary-light);
   color: var(--color-primary);
+  margin-bottom: var(--space-sm);
 }
 
 .secondaryButton:hover {
@@ -158,6 +168,12 @@
 .priceBreakdownRow {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.priceBreakdownDescription {
+  word-break: break-all;
 }
 
 .priceBreakdownDescriptionTotal, .priceBreakdownValueTotal {

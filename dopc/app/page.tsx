@@ -15,60 +15,69 @@ export default function Home() {
                             <h2 className={styles.subtitle}>Details</h2>
                             <div className={styles.inputWrapper}>
                                 <input
-                                    id="venue-slug"
+                                    id="venueSlug"
+                                    data-test-id="venueSlug"
                                     className={styles.input}
                                     placeholder=""
                                 />
                                 <label
                                     className={styles.innerLabel}
-                                    htmlFor="venue-slug"
+                                    htmlFor="venueSlug"
                                 >
                                     Venue slug
                                 </label>
                             </div>
                             <div className={styles.inputWrapper}>
                                 <input
-                                    id="cart-value"
+                                    id="cartValue"
+                                    data-test-id="cartValue"
                                     type="text"
                                     className={styles.input}
                                     placeholder=""
                                 />
                                 <label
                                     className={styles.innerLabel}
-                                    htmlFor="cart-value"
+                                    htmlFor="cartValue"
                                 >
                                     Cart value (EUR)
                                 </label>
                             </div>
-                            <div className={styles.inputWrapper}>
-                                <input
-                                    id="user-latitude"
-                                    type="text"
-                                    className={styles.input}
-                                    placeholder=""
-                                />
-                                <label
-                                    className={styles.innerLabel}
-                                    htmlFor="user-latitude"
-                                >
-                                    User latitude
-                                </label>
+                            <div className={styles.inputRow}>
+                                <div className={styles.inputWrapper}>
+                                    <input
+                                        id="userLatitude"
+                                        data-test-id="userLatitude"
+                                        type="text"
+                                        className={styles.input}
+                                        placeholder=""
+                                    />
+                                    <label
+                                        className={styles.innerLabel}
+                                        htmlFor="userLatitude"
+                                    >
+                                        User latitude
+                                    </label>
+                                </div>
+                                <div className={styles.inputWrapper}>
+                                    <input
+                                        id="userLongitude"
+                                        data-test-id="userLongitude"
+                                        type="text"
+                                        className={styles.input}
+                                        placeholder=""
+                                    />
+                                    <label
+                                        className={styles.innerLabel}
+                                        htmlFor="userLongitude"
+                                    >
+                                        User longitude
+                                    </label>
+                                </div>
                             </div>
-                            <div className={styles.inputWrapper}>
-                                <input
-                                    id="user-longitude"
-                                    type="text"
-                                    className={styles.input}
-                                    placeholder=""
-                                />
-                                <label
-                                    className={styles.innerLabel}
-                                    htmlFor="user-longitude"
-                                >
-                                    User longitude
-                                </label>
-                            </div>
-                            <button className={styles.secondaryButton}>
+                            <button
+                                className={styles.secondaryButton}
+                                data-test-id="getLocation"
+                            >
                                 Get location
                             </button>
                             <button className={styles.primaryButton}>
