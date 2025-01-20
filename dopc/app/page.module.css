@@ -1,6 +1,5 @@
 .page {
   display: flex;
-  justify-content: center;
   align-items: center;
   font-family: Nunito Sans;
 }
@@ -8,14 +7,86 @@
 .main {
   display: flex;
   flex-direction: column;
+  margin: 2rem 5%;
 }
 
 .calculatorTile {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   background-color: var(--color-bg);
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--color-border-primary);
+  padding: var(--space-md);
+}
+
+.title {
+  font-size: 2rem;
+  font-family: Coiny;
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+  margin-right: 2rem;
+}
+
+.calculatorWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.detailsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.priceBreakdownWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.subtitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.primaryButton, .secondaryButton {
+  all: unset;
+  cursor: pointer;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--border-radius-md);
+  width: fit-content;
+  transition: all .2s ease;
+}
+
+.secondaryButton {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.secondaryButton:hover {
+  background-color: var(--color-primary-light-hovered);
+}
+
+.secondaryButton:active {
+  background-color: var(--color-primary-light-pressed);
+}
+
+.primaryButton {
+  background-color: var(--color-primary);
+  color: #fff;
+  font-weight: var(--font-weight-bold);
+}
+
+.primaryButton:hover {
+  background-color: var(--color-primary-hovered);
+}
+
+.primaryButton:active {
+  background-color: var(--color-primary-pressed);
 }

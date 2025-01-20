@@ -66,6 +66,11 @@ figcaption {
 /* Variables */
 :root {
   --color-primary: #009de0;
+  --color-primary-hovered: #1fa9e4;
+  --color-primary-pressed: #33b1e6;
+  --color-primary-light: #ebf7fd;
+  --color-primary-light-hovered: #d6effa;
+  --color-primary-light-pressed: #c2e7f8;
   --color-bg: #fff;
   --color-border-primary: #e4e4e5;
   --color-border-hovered: #c9cacb;
