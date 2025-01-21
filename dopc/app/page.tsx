@@ -11,8 +11,8 @@ export default function Home() {
     const [cartUserValueError, setCartUserValueError] = useState(false);
     const [cartUserInputError, setCartUserInputError] = useState(false);
     const [userLocation, setUserLocation] = useState({
-        latitude: 0,
-        longitude: 0,
+        latitude: "",
+        longitude: "",
     });
     const [userFormattedLocation, setUserFormattedLocation] = useState({
         latitude: 0,
@@ -53,43 +53,65 @@ export default function Home() {
     useEffect(() => {
         getVenueDetails(debouncedVenueSlug);
     }, [debouncedVenueSlug]);
+    useEffect(() => {
+        setVenueSlugError(false);
+    }, [venueSlug]);
 
-    function getVenueDetails(venueSlug: string) {
+    async function getVenueDetails(venueSlug: string) {
         // fetch coordinates
         if (!venueSlug) return;
-        fetch(
-            `https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues/${venueSlug}/static`
-        )
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Venue not found");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setVenueLocation({
-                    latitude: data.venue_raw.location.coordinates[1],
-                    longitude: data.venue_raw.location.coordinates[0],
-                });
-            });
-        // fetch the dynamic endpoint for other info
-        fetch(
-            `https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues/${venueSlug}/dynamic`
-        )
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Venue not found");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                const path = data.venue_raw.delivery_specs;
-                setSmallOrderMinimumNoSurcharge(
-                    path.order_minimum_no_surcharge
+        try {
+            const staticResponse = await fetch(
+                `https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues/${venueSlug}/static`
+            );
+            if (!staticResponse.ok) {
+                throw new Error(
+                    `Static API error: ${staticResponse.statusText}`
                 );
-                setDeliveryBaseFee(path.delivery_pricing.base_price);
-                setDistanceRanges(path.delivery_pricing.distance_ranges);
-            });
+            }
+            const staticData = await staticResponse.json();
+
+            if (staticData?.venue_raw?.location?.coordinates?.length === 2) {
+                setVenueLocation({
+                    latitude: staticData.venue_raw.location.coordinates[1],
+                    longitude: staticData.venue_raw.location.coordinates[0],
+                });
+            } else {
+                throw new Error("Invalid location data from the static API.");
+            }
+
+            // fetch other data
+            const dynamicResponse = await fetch(
+                `https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues/${venueSlug}/dynamic`
+            );
+            if (!dynamicResponse.ok) {
+                throw new Error(
+                    `Dynamic API error: ${dynamicResponse.statusText}`
+                );
+            }
+            const dynamicData = await dynamicResponse.json();
+
+            const deliverySpecs = dynamicData?.venue_raw?.delivery_specs;
+            if (deliverySpecs) {
+                setSmallOrderMinimumNoSurcharge(
+                    deliverySpecs.order_minimum_no_surcharge
+                );
+                setDeliveryBaseFee(deliverySpecs.delivery_pricing.base_price);
+                setDistanceRanges(
+                    deliverySpecs.delivery_pricing.distance_ranges
+                );
+            } else {
+                throw new Error("Invalid delivery data from the dynamic API.");
+            }
+
+            setVenueSlugError(false);
+        } catch (error: any) {
+            setVenueSlugError(true);
+            console.error(
+                "Error fetching venue details:",
+                error.message || error
+            );
+        }
     }
 
     console.log(smallOrderMinimumNoSurcharge, deliveryBaseFee, distanceRanges);
@@ -145,7 +167,7 @@ export default function Home() {
 
     function getUserLocation() {
         navigator.geolocation.getCurrentPosition((position) => {
-            setUserLocation({
+            setUserFormattedLocation({
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
             });
