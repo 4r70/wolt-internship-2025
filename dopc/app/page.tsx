@@ -2,7 +2,10 @@
 
 import styles from "./page.module.css";
 
-import { ChangeEvent, use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { calculateDistance } from "./utils/calculateDistance";
+import { calculateDeliveryFee } from "./utils/calculateDeliveryFee";
+import { calculateSmallOrderSurcharge } from "./utils/calculateSmallOrderSurcharge";
 
 export default function Home() {
     const [venueSlug, setVenueSlug] = useState<string>("");
@@ -237,79 +240,17 @@ export default function Home() {
         }
     }
 
-    // function to convert degrees to radians
-    function deg2rad(deg: number) {
-        return deg * (Math.PI / 180);
-    }
-
-    // haversine formula for calculating distance between two geographical coordinates https://stackoverflow.com/a/27943/17492171
-    function haverSineFormula(
-        lat1: number,
-        lon1: number,
-        lat2: number,
-        lon2: number
-    ) {
-        var R = 6371; // Radius of the earth in km
-        var degLat = deg2rad(lat2 - lat1);
-        var degLon = deg2rad(lon2 - lon1);
-        var a =
-            Math.sin(degLat / 2) * Math.sin(degLat / 2) +
-            Math.cos(deg2rad(lat1)) *
-                Math.cos(deg2rad(lat2)) *
-                Math.sin(degLon / 2) *
-                Math.sin(degLon / 2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = R * c; // Distance in km
-        d = d * 1000; // Distance in meters
-
-        return d;
-    }
-
-    function calculateDeliveryFee(distance: number) {
-        let fee = 0;
-        distanceRanges.forEach((range) => {
-            if (range.max !== 0) {
-                if (distance >= range.min && distance < range.max) {
-                    fee =
-                        deliveryBaseFee +
-                        range.a +
-                        Math.round((range.b * distance) / 10);
-                }
-            } else {
-                if (distance < range.min) {
-                    fee =
-                        deliveryBaseFee +
-                        range.a +
-                        Math.round((range.b * distance) / 10);
-                }
-            }
-        });
-        setDeliveryFee(fee / 100);
-        return fee / 100;
-    }
-
-    function calculateSmallOrderSurcharge() {
-        if (smallOrderMinimumNoSurcharge / 100 > parseFloat(cartUserValue)) {
-            const surcharge =
-                smallOrderMinimumNoSurcharge / 100 - parseFloat(cartUserValue);
-            setSmallOrderSurcharge(surcharge);
-            return surcharge;
-        }
-        setSmallOrderSurcharge(0);
-        return 0;
-    }
-
     function calculateDeliveryPrice() {
         setDeliveryDistanceError(false);
 
-        const deliveryDistance = haverSineFormula(
+        const deliveryDistance = calculateDistance(
             parseFloat(userLocation.latitude),
             parseFloat(userLocation.longitude),
             venueLocation.latitude,
             venueLocation.longitude
         );
 
-        const deliveryFee = calculateDeliveryFee(deliveryDistance);
+        const deliveryFee = calculateDeliveryFee(deliveryDistance, setDeliveryFee, distanceRanges, deliveryBaseFee);
         if (deliveryFee === 0) {
             setDeliveryDistanceError(true);
             return
@@ -320,9 +261,9 @@ export default function Home() {
         const cartValue = parseFloat(cartUserValue);
         setCartValue(cartValue);
 
-        const surcharge = calculateSmallOrderSurcharge();
+        const surcharge = calculateSmallOrderSurcharge(smallOrderMinimumNoSurcharge, cartUserValue, setSmallOrderSurcharge);
 
-        const total = cartValue + deliveryFee + surcharge;
+        const total = parseFloat((cartValue + deliveryFee + surcharge).toFixed(2));
         setTotal(total);
     }
 
