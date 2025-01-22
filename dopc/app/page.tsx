@@ -5,32 +5,41 @@ import styles from "./page.module.css";
 import { ChangeEvent, use, useEffect, useState } from "react";
 
 export default function Home() {
-    const [venueSlug, setVenueSlug] = useState("");
-    const [venueSlugError, setVenueSlugError] = useState(false);
-    const [cartUserValue, setCartUserValue] = useState("");
-    const [cartUserValueError, setCartUserValueError] = useState(false);
-    const [cartUserInputError, setCartUserInputError] = useState(false);
-    const [userLocation, setUserLocation] = useState({
+    const [venueSlug, setVenueSlug] = useState<string>("");
+    const [venueSlugError, setVenueSlugError] = useState<boolean>(false);
+    const [cartUserValue, setCartUserValue] = useState<string>("");
+    const [cartUserValueError, setCartUserValueError] =
+        useState<boolean>(false);
+    const [cartUserInputError, setCartUserInputError] =
+        useState<boolean>(false);
+    const [userLocation, setUserLocation] = useState<Record<string, string>>({
         latitude: "",
         longitude: "",
     });
-    const [venueLocation, setVenueLocation] = useState({
+    const [venueLocation, setVenueLocation] = useState<Record<string, number>>({
         latitude: 0,
         longitude: 0,
     });
-    const [userLatitudeError, setUserLatitudeError] = useState(false);
-    const [userLatitudeInputError, setUserLatitudeInputError] = useState(false)
-    const [userLongitudeError, setUserLongitudeError] = useState(false);
-    const [userLongitudeInputError, setUserLongitudeInputError] = useState(false)
-    const [cartValue, setCartValue] = useState(0);
-    const [deliveryBaseFee, setDeliveryBaseFee] = useState(0);
-    const [deliveryFee, setDeliveryFee] = useState(0);
-    const [deliveryDistance, setDeliveryDistance] = useState(0);
-    const [distanceRanges, setDistanceRanges] = useState([]);
+    const [userLatitudeError, setUserLatitudeError] = useState<boolean>(false);
+    const [userLatitudeInputError, setUserLatitudeInputError] =
+        useState<boolean>(false);
+    const [userLongitudeError, setUserLongitudeError] =
+        useState<boolean>(false);
+    const [userLongitudeInputError, setUserLongitudeInputError] =
+        useState<boolean>(false);
+    const [cartValue, setCartValue] = useState<number>(0);
+    const [deliveryBaseFee, setDeliveryBaseFee] = useState<number>(0);
+    const [deliveryFee, setDeliveryFee] = useState<number>(0);
+    const [deliveryDistance, setDeliveryDistance] = useState<number>(0);
+    const [deliveryDistanceError, setDeliveryDistanceError] =
+        useState<boolean>(false);
+    const [distanceRanges, setDistanceRanges] = useState<
+        Array<{ min: number; max: number; a: number; b: number; flag: null }>
+    >([]);
     const [smallOrderMinimumNoSurcharge, setSmallOrderMinimumNoSurcharge] =
-        useState(0);
-    const [smallOrderSurcharge, setSmallOrderSurcharge] = useState(0);
-    const [total, setTotal] = useState(0);
+        useState<number>(0);
+    const [smallOrderSurcharge, setSmallOrderSurcharge] = useState<number>(0);
+    const [total, setTotal] = useState<number>(0);
 
     // Provides a debounce for the user input so that the API call is not made on every keystroke
     function useDebounce(value: string, delay: number) {
@@ -48,9 +57,11 @@ export default function Home() {
     }
 
     const debouncedVenueSlug = useDebounce(venueSlug, 500);
+
     useEffect(() => {
         getVenueDetails(debouncedVenueSlug);
     }, [debouncedVenueSlug]);
+
     useEffect(() => {
         setVenueSlugError(false);
     }, [venueSlug]);
@@ -113,18 +124,6 @@ export default function Home() {
     }
 
     console.log(smallOrderMinimumNoSurcharge, deliveryBaseFee, distanceRanges);
-
-    // useEffect(() => {
-    //     if (!cartValue) return;
-    //     if (!smallOrderMinimumNoSurcharge) return;
-
-    //     if (cartValue > smallOrderMinimumNoSurcharge) {
-    //         setSmallOrderSurcharge(0);
-    //     } else {
-    //         const difference = smallOrderMinimumNoSurcharge - cartValue;
-    //         setSmallOrderSurcharge(differermnce)
-    //     }
-    // }, [cartValue, smallOrderMinimumNoSurcharge]);
 
     // allow user only to enter numbers, a dot and some other required keys
     function validateCartUserInput(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -200,7 +199,8 @@ export default function Home() {
             return;
         }
         // regex for matching correct longitudes from -180 to 180 and everything inbetween. accepts a point and numbers after that.
-        const longitudeRegex = /^-?([0-9](\.\d+)?|[1-9][0-9](\.\d+)?|1[0-7][0-9](\.\d+)?|180(\.0+)?)$/
+        const longitudeRegex =
+            /^-?([0-9](\.\d+)?|[1-9][0-9](\.\d+)?|1[0-7][0-9](\.\d+)?|180(\.0+)?)$/;
         if (!longitudeRegex.test(longitude)) {
             setUserLongitudeError(true);
         } else {
@@ -216,7 +216,10 @@ export default function Home() {
         validateUserChangeLongitude(userLocation.longitude);
     }, [userLocation.longitude]);
 
-    function validateUserChangeCoordinatesInput(e: React.KeyboardEvent<HTMLInputElement>, setError: (value: boolean) => void) {
+    function validateUserChangeCoordinatesInput(
+        e: React.KeyboardEvent<HTMLInputElement>,
+        setError: (value: boolean) => void
+    ) {
         const allowedKeys = [
             "Backspace",
             "ArrowLeft",
@@ -234,15 +237,93 @@ export default function Home() {
         }
     }
 
-    function formatCartUserValue(cartValue: string) {}
+    // function to convert degrees to radians
+    function deg2rad(deg: number) {
+        return deg * (Math.PI / 180);
+    }
+
+    // haversine formula for calculating distance between two geographical coordinates https://stackoverflow.com/a/27943/17492171
+    function haverSineFormula(
+        lat1: number,
+        lon1: number,
+        lat2: number,
+        lon2: number
+    ) {
+        var R = 6371; // Radius of the earth in km
+        var degLat = deg2rad(lat2 - lat1);
+        var degLon = deg2rad(lon2 - lon1);
+        var a =
+            Math.sin(degLat / 2) * Math.sin(degLat / 2) +
+            Math.cos(deg2rad(lat1)) *
+                Math.cos(deg2rad(lat2)) *
+                Math.sin(degLon / 2) *
+                Math.sin(degLon / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var d = R * c; // Distance in km
+        d = d * 1000; // Distance in meters
+
+        return d;
+    }
+
+    function calculateDeliveryFee(distance: number) {
+        let fee = 0;
+        distanceRanges.forEach((range) => {
+            if (range.max !== 0) {
+                if (distance >= range.min && distance < range.max) {
+                    fee =
+                        deliveryBaseFee +
+                        range.a +
+                        Math.round((range.b * distance) / 10);
+                }
+            } else {
+                if (distance < range.min) {
+                    fee =
+                        deliveryBaseFee +
+                        range.a +
+                        Math.round((range.b * distance) / 10);
+                }
+            }
+        });
+        setDeliveryFee(fee / 100);
+        return fee / 100;
+    }
+
+    function calculateSmallOrderSurcharge() {
+        if (smallOrderMinimumNoSurcharge / 100 > parseFloat(cartUserValue)) {
+            const surcharge =
+                smallOrderMinimumNoSurcharge / 100 - parseFloat(cartUserValue);
+            setSmallOrderSurcharge(surcharge);
+            return surcharge;
+        }
+        setSmallOrderSurcharge(0);
+        return 0;
+    }
 
     function calculateDeliveryPrice() {
-        // calculcate cart value
-        // setCartValue(formatCartUserValue(cartUserValue));
-        // calculate delivery fee
-        // calculate delivery distance
-        // calculate small order surcharge
-        // calculate total
+        setDeliveryDistanceError(false);
+
+        const deliveryDistance = haverSineFormula(
+            parseFloat(userLocation.latitude),
+            parseFloat(userLocation.longitude),
+            venueLocation.latitude,
+            venueLocation.longitude
+        );
+
+        const deliveryFee = calculateDeliveryFee(deliveryDistance);
+        if (deliveryFee === 0) {
+            setDeliveryDistanceError(true);
+            return
+        }
+
+        setDeliveryDistance(Math.round(deliveryDistance))
+
+        const cartValue = parseFloat(cartUserValue);
+        setCartValue(cartValue);
+
+        const surcharge = calculateSmallOrderSurcharge();
+
+        const total = cartValue + deliveryFee + surcharge;
+        setTotal(total);
     }
 
     return (
@@ -274,7 +355,7 @@ export default function Home() {
                                 </label>
                                 {venueSlugError && (
                                     <p className={styles.errorMessage}>
-                                        Venue was not found, check the spelling
+                                        Venue was not found, check the spelling.
                                     </p>
                                 )}
                             </div>
@@ -307,7 +388,7 @@ export default function Home() {
                                 )}
                                 {cartUserValueError && (
                                     <p className={styles.errorMessage}>
-                                        The cart value is formatted incorrectly
+                                        The cart value is formatted incorrectly.
                                     </p>
                                 )}
                             </div>
@@ -320,7 +401,12 @@ export default function Home() {
                                         className={styles.input}
                                         placeholder=""
                                         value={userLocation.latitude}
-                                        onKeyDown={(e) => validateUserChangeCoordinatesInput(e, setUserLatitudeInputError)}
+                                        onKeyDown={(e) =>
+                                            validateUserChangeCoordinatesInput(
+                                                e,
+                                                setUserLatitudeInputError
+                                            )
+                                        }
                                         onChange={(e) =>
                                             setUserLocation({
                                                 ...userLocation,
@@ -334,10 +420,16 @@ export default function Home() {
                                     >
                                         User latitude
                                     </label>
-                                    {userLatitudeInputError && (<p className={styles.errorMessage}>Input the latitude using only numbers <br /> from -90 to 90 and an optional dot.</p>)}
+                                    {userLatitudeInputError && (
+                                        <p className={styles.errorMessage}>
+                                            Input the latitude using only
+                                            numbers <br /> from -90 to 90 and an
+                                            optional dot.
+                                        </p>
+                                    )}
                                     {userLatitudeError && (
                                         <p className={styles.errorMessage}>
-                                            Latitude format is invalid
+                                            Latitude format is invalid.
                                         </p>
                                     )}
                                 </div>
@@ -349,7 +441,12 @@ export default function Home() {
                                         className={styles.input}
                                         placeholder=""
                                         value={userLocation.longitude}
-                                        onKeyDown={(e) => validateUserChangeCoordinatesInput(e, setUserLongitudeInputError)}
+                                        onKeyDown={(e) =>
+                                            validateUserChangeCoordinatesInput(
+                                                e,
+                                                setUserLongitudeInputError
+                                            )
+                                        }
                                         onChange={(e) =>
                                             setUserLocation({
                                                 ...userLocation,
@@ -363,10 +460,16 @@ export default function Home() {
                                     >
                                         User longitude
                                     </label>
-                                    {userLongitudeInputError && (<p className={styles.errorMessage}>Input the longitude using only numbers <br /> from -180 to 180  and an optional dot.</p>)}
+                                    {userLongitudeInputError && (
+                                        <p className={styles.errorMessage}>
+                                            Input the longitude using only
+                                            numbers <br /> from -180 to 180 and
+                                            an optional dot.
+                                        </p>
+                                    )}
                                     {userLongitudeError && (
                                         <p className={styles.errorMessage}>
-                                            Longitude format is invalid
+                                            Longitude format is invalid.
                                         </p>
                                     )}
                                 </div>
@@ -384,6 +487,7 @@ export default function Home() {
                             >
                                 Calculate delivery price
                             </button>
+                            {deliveryDistanceError && (<p className={styles.errorMessage}>Delivery cannot be calculated, the delivery distance is too long.</p>)}
                         </div>
                         <div className={styles.priceBreakdownWrapper}>
                             <h2 className={styles.subtitle}>Price breakdown</h2>
