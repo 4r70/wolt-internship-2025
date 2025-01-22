@@ -14,16 +14,14 @@ export default function Home() {
         latitude: "",
         longitude: "",
     });
-    const [userFormattedLocation, setUserFormattedLocation] = useState({
-        latitude: 0,
-        longitude: 0,
-    });
     const [venueLocation, setVenueLocation] = useState({
         latitude: 0,
         longitude: 0,
     });
     const [userLatitudeError, setUserLatitudeError] = useState(false);
+    const [userLatitudeInputError, setUserLatitudeInputError] = useState(false)
     const [userLongitudeError, setUserLongitudeError] = useState(false);
+    const [userLongitudeInputError, setUserLongitudeInputError] = useState(false)
     const [cartValue, setCartValue] = useState(0);
     const [deliveryBaseFee, setDeliveryBaseFee] = useState(0);
     const [deliveryFee, setDeliveryFee] = useState(0);
@@ -167,16 +165,74 @@ export default function Home() {
 
     function getUserLocation() {
         navigator.geolocation.getCurrentPosition((position) => {
-            setUserFormattedLocation({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
+            setUserLocation({
+                latitude: position.coords.latitude.toString(),
+                longitude: position.coords.longitude.toString(),
             });
         });
     }
 
-    function userChangeLatitude(latitude: string) {}
+    function validateUserChangeLatitude(latitude: string) {
+        if (!latitude) {
+            setUserLatitudeError(false);
+            return;
+        }
+        // regex for matching correct latitudes from -90 to 90 and everything inbetween. accepts a point and numbers after that.
+        const latitudeRegex = /^-?(90(\.0+)?|([0-9]|[1-8][0-9])(\.\d+)?)$/;
+        if (!latitudeRegex.test(latitude)) {
+            setUserLatitudeError(true);
+        } else {
+            setUserLatitudeError(false);
+            setUserLocation({
+                ...userLocation,
+                latitude: latitude,
+            });
+        }
+    }
 
-    function userChangeLongitude(longitude: string) {}
+    useEffect(() => {
+        validateUserChangeLatitude(userLocation.latitude);
+    }, [userLocation.latitude]);
+
+    function validateUserChangeLongitude(longitude: string) {
+        if (!longitude) {
+            setUserLongitudeError(false);
+            return;
+        }
+        // regex for matching correct longitudes from -180 to 180 and everything inbetween. accepts a point and numbers after that.
+        const longitudeRegex = /^-?([0-9](\.\d+)?|[1-9][0-9](\.\d+)?|1[0-7][0-9](\.\d+)?|180(\.0+)?)$/
+        if (!longitudeRegex.test(longitude)) {
+            setUserLongitudeError(true);
+        } else {
+            setUserLongitudeError(false);
+            setUserLocation({
+                ...userLocation,
+                longitude: longitude,
+            });
+        }
+    }
+
+    useEffect(() => {
+        validateUserChangeLongitude(userLocation.longitude);
+    }, [userLocation.longitude]);
+
+    function validateUserChangeCoordinatesInput(e: React.KeyboardEvent<HTMLInputElement>, setError: (value: boolean) => void) {
+        const allowedKeys = [
+            "Backspace",
+            "ArrowLeft",
+            "ArrowRight",
+            "Delete",
+            "Tab",
+            "Enter",
+            "Control",
+        ];
+        if (!/[0-9]|\.|\-/.test(e.key) && !allowedKeys.includes(e.key)) {
+            e.preventDefault();
+            setError(true);
+        } else {
+            setError(false);
+        }
+    }
 
     function formatCartUserValue(cartValue: string) {}
 
@@ -264,8 +320,12 @@ export default function Home() {
                                         className={styles.input}
                                         placeholder=""
                                         value={userLocation.latitude}
+                                        onKeyDown={(e) => validateUserChangeCoordinatesInput(e, setUserLatitudeInputError)}
                                         onChange={(e) =>
-                                            userChangeLatitude(e.target.value)
+                                            setUserLocation({
+                                                ...userLocation,
+                                                latitude: e.target.value,
+                                            })
                                         }
                                     />
                                     <label
@@ -274,6 +334,7 @@ export default function Home() {
                                     >
                                         User latitude
                                     </label>
+                                    {userLatitudeInputError && (<p className={styles.errorMessage}>Input the latitude using only numbers <br /> from -90 to 90 and an optional dot.</p>)}
                                     {userLatitudeError && (
                                         <p className={styles.errorMessage}>
                                             Latitude format is invalid
@@ -288,8 +349,12 @@ export default function Home() {
                                         className={styles.input}
                                         placeholder=""
                                         value={userLocation.longitude}
+                                        onKeyDown={(e) => validateUserChangeCoordinatesInput(e, setUserLongitudeInputError)}
                                         onChange={(e) =>
-                                            userChangeLongitude(e.target.value)
+                                            setUserLocation({
+                                                ...userLocation,
+                                                longitude: e.target.value,
+                                            })
                                         }
                                     />
                                     <label
@@ -298,6 +363,7 @@ export default function Home() {
                                     >
                                         User longitude
                                     </label>
+                                    {userLongitudeInputError && (<p className={styles.errorMessage}>Input the longitude using only numbers <br /> from -180 to 180  and an optional dot.</p>)}
                                     {userLongitudeError && (
                                         <p className={styles.errorMessage}>
                                             Longitude format is invalid
