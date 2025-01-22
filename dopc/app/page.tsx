@@ -3,13 +3,14 @@
 import styles from "./page.module.css";
 
 import { useEffect, useState } from "react";
+
 import { calculateDistance } from "./utils/calculateDistance";
 import { calculateDeliveryFee } from "./utils/calculateDeliveryFee";
 import { calculateSmallOrderSurcharge } from "./utils/calculateSmallOrderSurcharge";
+import { useVenueDetails } from "./hooks/useVenueDetails";
 
 export default function Home() {
     const [venueSlug, setVenueSlug] = useState<string>("");
-    const [venueSlugError, setVenueSlugError] = useState<boolean>(false);
     const [cartUserValue, setCartUserValue] = useState<string>("");
     const [cartUserValueError, setCartUserValueError] =
         useState<boolean>(false);
@@ -19,10 +20,6 @@ export default function Home() {
         latitude: "",
         longitude: "",
     });
-    const [venueLocation, setVenueLocation] = useState<Record<string, number>>({
-        latitude: 0,
-        longitude: 0,
-    });
     const [userLatitudeError, setUserLatitudeError] = useState<boolean>(false);
     const [userLatitudeInputError, setUserLatitudeInputError] =
         useState<boolean>(false);
@@ -31,102 +28,18 @@ export default function Home() {
     const [userLongitudeInputError, setUserLongitudeInputError] =
         useState<boolean>(false);
     const [cartValue, setCartValue] = useState<number>(0);
-    const [deliveryBaseFee, setDeliveryBaseFee] = useState<number>(0);
     const [deliveryFee, setDeliveryFee] = useState<number>(0);
     const [deliveryDistance, setDeliveryDistance] = useState<number>(0);
     const [deliveryDistanceError, setDeliveryDistanceError] =
         useState<boolean>(false);
-    const [distanceRanges, setDistanceRanges] = useState<
-        Array<{ min: number; max: number; a: number; b: number; flag: null }>
-    >([]);
-    const [smallOrderMinimumNoSurcharge, setSmallOrderMinimumNoSurcharge] =
-        useState<number>(0);
     const [smallOrderSurcharge, setSmallOrderSurcharge] = useState<number>(0);
     const [total, setTotal] = useState<number>(0);
 
-    // Provides a debounce for the user input so that the API call is not made on every keystroke
-    function useDebounce(value: string, delay: number) {
-        const [debouncedVenueSlug, setDebouncedVenueSlug] = useState(value);
-        useEffect(() => {
-            const debounceHandler = setTimeout(() => {
-                setDebouncedVenueSlug(value);
-            }, delay);
-
-            return () => {
-                clearTimeout(debounceHandler);
-            };
-        }, [value, delay]);
-        return debouncedVenueSlug;
-    }
-
-    const debouncedVenueSlug = useDebounce(venueSlug, 500);
-
-    useEffect(() => {
-        getVenueDetails(debouncedVenueSlug);
-    }, [debouncedVenueSlug]);
-
-    useEffect(() => {
-        setVenueSlugError(false);
-    }, [venueSlug]);
-
-    async function getVenueDetails(venueSlug: string) {
-        // fetch coordinates
-        if (!venueSlug) return;
-        try {
-            const staticResponse = await fetch(
-                `https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues/${venueSlug}/static`
-            );
-            if (!staticResponse.ok) {
-                throw new Error(
-                    `Static API error: ${staticResponse.statusText}`
-                );
-            }
-            const staticData = await staticResponse.json();
-
-            if (staticData?.venue_raw?.location?.coordinates?.length === 2) {
-                setVenueLocation({
-                    latitude: staticData.venue_raw.location.coordinates[1],
-                    longitude: staticData.venue_raw.location.coordinates[0],
-                });
-            } else {
-                throw new Error("Invalid location data from the static API.");
-            }
-
-            // fetch other data
-            const dynamicResponse = await fetch(
-                `https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues/${venueSlug}/dynamic`
-            );
-            if (!dynamicResponse.ok) {
-                throw new Error(
-                    `Dynamic API error: ${dynamicResponse.statusText}`
-                );
-            }
-            const dynamicData = await dynamicResponse.json();
-
-            const deliverySpecs = dynamicData?.venue_raw?.delivery_specs;
-            if (deliverySpecs) {
-                setSmallOrderMinimumNoSurcharge(
-                    deliverySpecs.order_minimum_no_surcharge
-                );
-                setDeliveryBaseFee(deliverySpecs.delivery_pricing.base_price);
-                setDistanceRanges(
-                    deliverySpecs.delivery_pricing.distance_ranges
-                );
-            } else {
-                throw new Error("Invalid delivery data from the dynamic API.");
-            }
-
-            setVenueSlugError(false);
-        } catch (error: any) {
-            setVenueSlugError(true);
-            console.error(
-                "Error fetching venue details:",
-                error.message || error
-            );
-        }
-    }
-
-    console.log(smallOrderMinimumNoSurcharge, deliveryBaseFee, distanceRanges);
+    const {
+        venueLocation,
+        deliverySpecs,
+        error: venueError,
+    } = useVenueDetails(venueSlug);
 
     // allow user only to enter numbers, a dot and some other required keys
     function validateCartUserInput(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -241,6 +154,7 @@ export default function Home() {
     }
 
     function calculateDeliveryPrice() {
+        // need to add errors if any of the fields are empty
         setDeliveryDistanceError(false);
 
         const deliveryDistance = calculateDistance(
@@ -250,20 +164,31 @@ export default function Home() {
             venueLocation.longitude
         );
 
-        const deliveryFee = calculateDeliveryFee(deliveryDistance, setDeliveryFee, distanceRanges, deliveryBaseFee);
+        const deliveryFee = calculateDeliveryFee(
+            deliveryDistance,
+            setDeliveryFee,
+            deliverySpecs.distanceRanges,
+            deliverySpecs.deliveryBaseFee
+        );
         if (deliveryFee === 0) {
             setDeliveryDistanceError(true);
-            return
+            return;
         }
 
-        setDeliveryDistance(Math.round(deliveryDistance))
+        setDeliveryDistance(Math.round(deliveryDistance));
 
         const cartValue = parseFloat(cartUserValue);
         setCartValue(cartValue);
 
-        const surcharge = calculateSmallOrderSurcharge(smallOrderMinimumNoSurcharge, cartUserValue, setSmallOrderSurcharge);
+        const surcharge = calculateSmallOrderSurcharge(
+            deliverySpecs.smallOrderMinimumNoSurcharge,
+            cartUserValue,
+            setSmallOrderSurcharge
+        );
 
-        const total = parseFloat((cartValue + deliveryFee + surcharge).toFixed(2));
+        const total = parseFloat(
+            (cartValue + deliveryFee + surcharge).toFixed(2)
+        );
         setTotal(total);
     }
 
@@ -294,7 +219,7 @@ export default function Home() {
                                 >
                                     Venue slug
                                 </label>
-                                {venueSlugError && (
+                                {venueError && (
                                     <p className={styles.errorMessage}>
                                         Venue was not found, check the spelling.
                                     </p>
@@ -428,7 +353,12 @@ export default function Home() {
                             >
                                 Calculate delivery price
                             </button>
-                            {deliveryDistanceError && (<p className={styles.errorMessage}>Delivery cannot be calculated, the delivery distance is too long.</p>)}
+                            {deliveryDistanceError && (
+                                <p className={styles.errorMessage}>
+                                    Delivery cannot be calculated, the delivery
+                                    distance is too long.
+                                </p>
+                            )}
                         </div>
                         <div className={styles.priceBreakdownWrapper}>
                             <h2 className={styles.subtitle}>Price breakdown</h2>
