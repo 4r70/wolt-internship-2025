@@ -76,8 +76,6 @@ export default function Home() {
         }
     }
 
-    console.log(venueLocation);
-
     useEffect(() => {
         validateCartUserValue(cartUserValue);
     }, [cartUserValue]);

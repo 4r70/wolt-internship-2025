@@ -22,7 +22,7 @@ export function useVenueDetails(venueSlug: string) {
     useEffect(() => {
         setError(false);
     }, [venueSlug]);
-    console.log(debouncedVenueSlug)
+
     useEffect(() => {
         if (!debouncedVenueSlug) return;
 
