@@ -36,6 +36,13 @@ export default function Home() {
     const [total, setTotal] = useState<number>(0);
     const [emptyErrors, setEmptyErrors] = useState<Record<string, boolean>>({});
     const [success, setSuccess] = useState<boolean>(false);
+    const [rawValues, setRawValues] = useState<Record<string, number>>({
+        cartValue: 0,
+        smallOrderSurcharge: 0,
+        deliveryDistance: 0,
+        deliveryFee: 0,
+        total: 0,
+    });
 
     const {
         venueLocation,
@@ -230,6 +237,13 @@ export default function Home() {
             (cartValue + deliveryFee + surcharge).toFixed(2)
         );
         setTotal(total);
+        setRawValues({
+            cartValue: cartValue * 100,
+            smallOrderSurcharge: surcharge * 100,
+            deliveryDistance: deliveryDistance,
+            deliveryFee: deliveryFee * 100,
+            total: total * 100,
+        })
         setSuccess(true);
     }
 
@@ -479,7 +493,7 @@ export default function Home() {
                                     </dt>
                                     <dd
                                         className={styles.priceBreakdownValue}
-                                        data-raw-value="0"
+                                        data-raw-value={rawValues.cartValue}
                                     >
                                         {cartValue} €
                                     </dd>
@@ -494,7 +508,7 @@ export default function Home() {
                                     </dt>
                                     <dd
                                         className={styles.priceBreakdownValue}
-                                        data-raw-value="0"
+                                        data-raw-value={rawValues.smallOrderSurcharge}
                                     >
                                         {smallOrderSurcharge} €
                                     </dd>
@@ -509,7 +523,7 @@ export default function Home() {
                                     </dt>
                                     <dd
                                         className={styles.priceBreakdownValue}
-                                        data-raw-value="0"
+                                        data-raw-value={rawValues.deliveryDistance}
                                     >
                                         {deliveryDistance} m
                                     </dd>
@@ -524,7 +538,7 @@ export default function Home() {
                                     </dt>
                                     <dd
                                         className={styles.priceBreakdownValue}
-                                        data-raw-value="0"
+                                        data-raw-value={rawValues.deliveryFee}
                                     >
                                         {deliveryFee} €
                                     </dd>
@@ -541,7 +555,7 @@ export default function Home() {
                                         className={
                                             styles.priceBreakdownValueTotal
                                         }
-                                        data-raw-value="0"
+                                        data-raw-value={rawValues.total}
                                     >
                                         {total} €
                                     </dd>
