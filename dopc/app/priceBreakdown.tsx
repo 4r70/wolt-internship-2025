@@ -29,7 +29,7 @@ export default function priceBreakdown({
                         className={styles.priceBreakdownValue}
                         data-raw-value={rawValues.cartValue}
                     >
-                        {cartValue} €
+                        {cartValue.toFixed(2)} €
                     </dd>
                 </div>
                 <div className={styles.priceBreakdownRow}>
@@ -40,7 +40,7 @@ export default function priceBreakdown({
                         className={styles.priceBreakdownValue}
                         data-raw-value={rawValues.smallOrderSurcharge}
                     >
-                        {smallOrderSurcharge} €
+                        {smallOrderSurcharge.toFixed(2)} €
                     </dd>
                 </div>
                 <div className={styles.priceBreakdownRow}>
@@ -62,7 +62,7 @@ export default function priceBreakdown({
                         className={styles.priceBreakdownValue}
                         data-raw-value={rawValues.deliveryFee}
                     >
-                        {deliveryFee} €
+                        {deliveryFee.toFixed(2)} €
                     </dd>
                 </div>
                 <div className={styles.priceBreakdownRow}>
@@ -73,7 +73,7 @@ export default function priceBreakdown({
                         className={styles.priceBreakdownValueTotal}
                         data-raw-value={rawValues.total}
                     >
-                        {total} €
+                        {total.toFixed(2)} €
                     </dd>
                 </div>
             </dl>

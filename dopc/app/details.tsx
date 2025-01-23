@@ -5,6 +5,7 @@ import styles from "@/styles/calculator.module.css";
 import { useState, useEffect } from "react";
 
 import { useVenueDetails } from "./hooks/useVenueDetails";
+import { getUserLocation } from "./hooks/getUserLocation";
 
 import { calculateDistance } from "./utils/calculateDistance";
 import { calculateDeliveryFee } from "./utils/calculateDeliveryFee";
@@ -37,7 +38,10 @@ export default function details({
         useState<boolean>(false);
     const [cartUserInputError, setCartUserInputError] =
         useState<boolean>(false);
-    const [userLocation, setUserLocation] = useState<{ latitude: string; longitude: string }>({
+    const [userLocation, setUserLocation] = useState<{
+        latitude: string;
+        longitude: string;
+    }>({
         latitude: "",
         longitude: "",
     });
@@ -58,23 +62,6 @@ export default function details({
         deliverySpecs,
         error: venueError,
     } = useVenueDetails(venueSlug);
-
-    function getUserLocation() {
-        navigator.geolocation.getCurrentPosition((position) => {
-            setUserLocation({
-                latitude: position.coords.latitude.toString(),
-                longitude: position.coords.longitude.toString(),
-            });
-            const newEmptyErrors = { ...emptyErrors };
-            if (newEmptyErrors.userLatitude) {
-                newEmptyErrors.userLatitude = false;
-            }
-            if (newEmptyErrors.userLongitude) {
-                newEmptyErrors.userLongitude = false;
-            }
-            setEmptyErrors(newEmptyErrors);
-        });
-    }
 
     function calculateDeliveryPrice() {
         setDeliveryDistanceError(false);
@@ -168,7 +155,7 @@ export default function details({
                 emptyErrors={emptyErrors}
                 setEmptyErrors={setEmptyErrors}
             />
-            <LocationInput 
+            <LocationInput
                 userLocation={userLocation}
                 setUserLocation={setUserLocation}
                 userLatitudeError={userLatitudeError}
@@ -185,7 +172,13 @@ export default function details({
             <button
                 className={styles.secondaryButton}
                 data-test-id="getLocation"
-                onClick={() => getUserLocation()}
+                onClick={() =>
+                    getUserLocation({
+                        setUserLocation,
+                        emptyErrors,
+                        setEmptyErrors,
+                    })
+                }
             >
                 Get location
             </button>
