@@ -59,24 +59,6 @@ export default function details({
         error: venueError,
     } = useVenueDetails(venueSlug);
 
-    // allow the value to include only numbers before "." and only two numbers after "."
-    function validateCartUserValue(value: string) {
-        if (!value) {
-            setCartUserValueError(false);
-            return;
-        }
-        if (!/^[0-9]+(\.[0-9]{2})?$/.test(value)) {
-            setCartUserValueError(true);
-        } else {
-            setCartUserValueError(false);
-            setCartUserValue(value);
-        }
-    }
-
-    useEffect(() => {
-        validateCartUserValue(cartUserValue);
-    }, [cartUserValue]);
-
     function getUserLocation() {
         navigator.geolocation.getCurrentPosition((position) => {
             setUserLocation({
@@ -180,10 +162,11 @@ export default function details({
                 cartUserValue={cartUserValue}
                 setCartUserValue={setCartUserValue}
                 cartUserInputError={cartUserInputError}
+                setCartUserInputError={setCartUserInputError}
                 cartUserValueError={cartUserValueError}
+                setCartUserValueError={setCartUserValueError}
                 emptyErrors={emptyErrors}
                 setEmptyErrors={setEmptyErrors}
-                setCartUserInputError={setCartUserInputError}
             />
             <LocationInput 
                 userLocation={userLocation}
