@@ -22,7 +22,7 @@ export function useVenueDetails(venueSlug: string) {
     useEffect(() => {
         setError(false);
     }, [venueSlug]);
-
+    console.log(debouncedVenueSlug)
     useEffect(() => {
         if (!debouncedVenueSlug) return;
 
@@ -85,8 +85,8 @@ export function useVenueDetails(venueSlug: string) {
                 console.error("Error fetching venue details:", error);
             }
         }
-        fetchVenueDetails(venueSlug);
-    }, [venueSlug]);
+        fetchVenueDetails(debouncedVenueSlug);
+    }, [debouncedVenueSlug]);
 
     return { venueLocation, deliverySpecs, error };
 }

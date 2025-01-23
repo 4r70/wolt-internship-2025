@@ -35,6 +35,7 @@ export default function Home() {
     const [smallOrderSurcharge, setSmallOrderSurcharge] = useState<number>(0);
     const [total, setTotal] = useState<number>(0);
     const [emptyErrors, setEmptyErrors] = useState<Record<string, boolean>>({});
+    const [success, setSuccess] = useState<boolean>(false);
 
     const {
         venueLocation,
@@ -74,6 +75,8 @@ export default function Home() {
             setCartUserValue(value);
         }
     }
+
+    console.log(venueLocation);
 
     useEffect(() => {
         validateCartUserValue(cartUserValue);
@@ -229,7 +232,16 @@ export default function Home() {
             (cartValue + deliveryFee + surcharge).toFixed(2)
         );
         setTotal(total);
+        setSuccess(true);
     }
+
+    useEffect(() => {
+        if (success) {
+            setTimeout(() => {
+                setSuccess(false);
+            }, 2000);
+        }
+    }, [success]);
 
     return (
         <div className={styles.page}>
@@ -432,12 +444,23 @@ export default function Home() {
                             >
                                 Get location
                             </button>
-                            <button
-                                className={styles.primaryButton}
-                                onClick={() => calculateDeliveryPrice()}
-                            >
-                                Calculate delivery price
-                            </button>
+                            <div className={styles.successWrapper}>
+                                <button
+                                    className={styles.primaryButton}
+                                    onClick={() => calculateDeliveryPrice()}
+                                >
+                                    Calculate delivery price
+                                </button>
+                                <p
+                                    className={`${styles.successMessage} ${
+                                        success
+                                            ? styles.successMessageVisible
+                                            : ""
+                                    }`}
+                                >
+                                    Delivery price calculated successfully!
+                                </p>
+                            </div>
                             {deliveryDistanceError && (
                                 <p className={styles.errorMessage}>
                                     Delivery cannot be calculated, the delivery

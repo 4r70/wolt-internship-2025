@@ -123,6 +123,47 @@
   font-size: var(--font-size-xs);
 }
 
+.successMessage {
+  color: var(--color-positive);
+  font-size: var(--font-size-xs);
+  opacity: 0;
+  transform: translate(0, 0rem);
+  transition: all .2s ease-in;
+}
+
+.successMessageVisible {
+  opacity: 1;
+  animation: spring .2s forwards;
+  transition: all .2s ease-in;
+}
+
+@keyframes spring {
+  0% {
+    transform: translate(0, -.5rem);
+  }
+  25% {
+    transform: translate(0, -.25rem);
+  }
+  50% {
+    transform: translate(0, .125rem);
+  }
+  65% {
+    transform: translate(0, 0rem);
+  }
+  80% {
+    transform: translate(0, .0125rem);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.successWrapper {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+}
+
 .primaryButton, .secondaryButton {
   all: unset;
   cursor: pointer;
