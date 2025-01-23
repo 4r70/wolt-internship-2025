@@ -1,0 +1,227 @@
+.calculatorTile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--color-bg);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border-primary);
+    padding: var(--space-md);
+    box-shadow: 0 1px 2px 0 #0000001f;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-size: clamp(1.5rem, 1.4rem + 0.5vw, 2rem);
+    font-family: Coiny;
+    margin-bottom: var(--space-md);
+    margin-right: 2rem;
+}
+
+.calculatorWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.detailsWrapper,
+.priceBreakdownWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.subtitle {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-extrabold);
+}
+
+.inputRow {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.input {
+    padding: .75rem .875rem;
+    border-radius: var(--border-radius-md);
+    border: 2px solid var(--color-border-primary);
+    background-color: var(--color-bg);
+    font-size: var(--font-size-md);
+    max-width: 40ch;
+    width: 100%;
+    transition: border .2s ease, outline .2s ease;
+}
+
+.input:hover {
+    border: 2px solid var(--color-primary);
+}
+
+.input:focus {
+    border-color: var(--color-outline-selected);
+    outline: 1px solid var(--color-outline-selected);
+    padding-top: 1.25rem;
+    padding-bottom: .25rem;
+}
+
+.input:focus-visible {
+    border-color: var(--color-outline-focused);
+    outline: 1px solid var(--color-outline-focused);
+}
+
+.input:focus:hover,
+.input:focus-visible:hover {
+    border-color: var(--color-primary);
+    outline: 1px solid var(--color-primary);
+}
+
+.input:not(:placeholder-shown) {
+    padding-top: 1.25rem;
+    padding-bottom: .25rem;
+}
+
+.innerLabel {
+    pointer-events: none;
+    position: absolute;
+    font-size: var(--font-size-sm);
+    left: var(--space-md);
+    color: var(--color-text-secondary);
+    transform: translate(0, 1rem);
+    transition: all .2s ease-in-out;
+}
+
+.input:focus~.innerLabel,
+.input:active~.innerLabel {
+    transform: translate(0, .5rem);
+    font-size: var(--font-size-xs);
+    color: var(--color-primary);
+}
+
+.input:not(:placeholder-shown)~.innerLabel {
+    transform: translate(0, .5rem);
+    font-size: var(--font-size-xs);
+}
+
+.errorMessage {
+    color: var(--color-negative);
+    font-size: var(--font-size-xs);
+}
+
+.successMessage {
+    color: var(--color-positive);
+    font-size: var(--font-size-xs);
+    opacity: 0;
+    transform: translate(0, 0rem);
+    transition: all .2s ease-in;
+}
+
+.successMessageVisible {
+    opacity: 1;
+    animation: spring .2s forwards;
+    transition: all .2s ease-in;
+}
+
+@keyframes spring {
+    0% {
+        transform: translate(0, -.5rem);
+    }
+
+    25% {
+        transform: translate(0, -.25rem);
+    }
+
+    50% {
+        transform: translate(0, .125rem);
+    }
+
+    65% {
+        transform: translate(0, 0rem);
+    }
+
+    80% {
+        transform: translate(0, .0125rem);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+.successWrapper {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.primaryButton,
+.secondaryButton {
+    all: unset;
+    cursor: pointer;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--border-radius-md);
+    width: fit-content;
+    font-size: var(--font-size-md);
+    transition: background-color .2s ease;
+}
+
+.secondaryButton {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.secondaryButton:hover {
+    background-color: var(--color-primary-light-hovered);
+}
+
+.secondaryButton:active {
+    background-color: var(--color-primary-light-pressed);
+}
+
+.secondaryButton:focus-visible,
+.primaryButton:focus-visible {
+    outline: 2px solid var(--color-outline-focused);
+}
+
+.primaryButton {
+    background-color: var(--color-primary);
+    color: #fff;
+    font-weight: var(--font-weight-bold);
+}
+
+.primaryButton:hover {
+    background-color: var(--color-primary-hovered);
+}
+
+.primaryButton:active {
+    background-color: var(--color-primary-pressed);
+}
+
+.priceBreakdown {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.priceBreakdownRow {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+.priceBreakdownDescription {
+    word-break: break-all;
+}
+
+.priceBreakdownDescriptionTotal,
+.priceBreakdownValueTotal {
+    font-weight: var(--font-weight-extrabold);
+}
