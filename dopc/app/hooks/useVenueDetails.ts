@@ -6,7 +6,11 @@ export function useVenueDetails(venueSlug: string) {
         latitude: 0,
         longitude: 0,
     });
-    const [deliverySpecs, setDeliverySpecs] = useState({
+    const [deliverySpecs, setDeliverySpecs] = useState<{
+        smallOrderMinimumNoSurcharge: number;
+        deliveryBaseFee: number;
+        distanceRanges: [];
+    }>({
         smallOrderMinimumNoSurcharge: 0,
         deliveryBaseFee: 0,
         distanceRanges: [],
@@ -30,7 +34,7 @@ export function useVenueDetails(venueSlug: string) {
                 );
                 if (!staticResponse.ok) {
                     throw new Error(
-                        `Static API error: ${staticResponse.statusText}`
+                        `Static API error: ${staticResponse.status}`
                     );
                 }
                 const staticData = await staticResponse.json();

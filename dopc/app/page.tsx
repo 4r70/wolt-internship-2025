@@ -34,6 +34,7 @@ export default function Home() {
         useState<boolean>(false);
     const [smallOrderSurcharge, setSmallOrderSurcharge] = useState<number>(0);
     const [total, setTotal] = useState<number>(0);
+    const [emptyErrors, setEmptyErrors] = useState<Record<string, boolean>>({});
 
     const {
         venueLocation,
@@ -84,6 +85,14 @@ export default function Home() {
                 latitude: position.coords.latitude.toString(),
                 longitude: position.coords.longitude.toString(),
             });
+            const newEmptyErrors = { ...emptyErrors };
+            if (newEmptyErrors.userLatitude) {
+                newEmptyErrors.userLatitude = false;
+            }
+            if (newEmptyErrors.userLongitude) {
+                newEmptyErrors.userLongitude = false;
+            }
+            setEmptyErrors(newEmptyErrors);
         });
     }
 
@@ -154,8 +163,38 @@ export default function Home() {
     }
 
     function calculateDeliveryPrice() {
-        // need to add errors if any of the fields are empty
         setDeliveryDistanceError(false);
+        const newEmptyErrors = { ...emptyErrors };
+
+        if (!venueSlug) {
+            newEmptyErrors.venueSlug = true;
+        } else {
+            newEmptyErrors.venueSlug = false;
+        }
+
+        if (!cartUserValue) {
+            newEmptyErrors.cartUserValue = true;
+        } else {
+            newEmptyErrors.cartUserValue = false;
+        }
+
+        if (!userLocation.latitude) {
+            newEmptyErrors.userLatitude = true;
+        } else {
+            newEmptyErrors.userLatitude = false;
+        }
+
+        if (!userLocation.longitude) {
+            newEmptyErrors.userLongitude = true;
+        } else {
+            newEmptyErrors.userLongitude = false;
+        }
+
+        setEmptyErrors(newEmptyErrors);
+
+        if (Object.values(newEmptyErrors).includes(true)) {
+            return;
+        }
 
         const deliveryDistance = calculateDistance(
             parseFloat(userLocation.latitude),
@@ -209,9 +248,15 @@ export default function Home() {
                                     className={styles.input}
                                     placeholder=""
                                     value={venueSlug}
-                                    onChange={(e) =>
-                                        setVenueSlug(e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                        setVenueSlug(e.target.value);
+                                        if (emptyErrors.venueSlug) {
+                                            setEmptyErrors({
+                                                ...emptyErrors,
+                                                venueSlug: false,
+                                            });
+                                        }
+                                    }}
                                 />
                                 <label
                                     className={styles.innerLabel}
@@ -222,6 +267,11 @@ export default function Home() {
                                 {venueError && (
                                     <p className={styles.errorMessage}>
                                         Venue was not found, check the spelling.
+                                    </p>
+                                )}
+                                {emptyErrors.venueSlug && (
+                                    <p className={styles.errorMessage}>
+                                        This field is required.
                                     </p>
                                 )}
                             </div>
@@ -237,7 +287,15 @@ export default function Home() {
                                         validateCartUserInput(e);
                                     }}
                                     onChange={(e) => {
-                                        setCartUserValue(e.target.value);
+                                        {
+                                            setCartUserValue(e.target.value);
+                                            if (emptyErrors.cartUserValue) {
+                                                setEmptyErrors({
+                                                    ...emptyErrors,
+                                                    cartUserValue: false,
+                                                });
+                                            }
+                                        }
                                     }}
                                 />
                                 <label
@@ -257,6 +315,11 @@ export default function Home() {
                                         The cart value is formatted incorrectly.
                                     </p>
                                 )}
+                                {emptyErrors.cartUserValue && (
+                                    <p className={styles.errorMessage}>
+                                        This field is required.
+                                    </p>
+                                )}
                             </div>
                             <div className={styles.inputRow}>
                                 <div className={styles.inputWrapper}>
@@ -273,12 +336,18 @@ export default function Home() {
                                                 setUserLatitudeInputError
                                             )
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             setUserLocation({
                                                 ...userLocation,
                                                 latitude: e.target.value,
-                                            })
-                                        }
+                                            });
+                                            if (emptyErrors.userLatitude) {
+                                                setEmptyErrors({
+                                                    ...emptyErrors,
+                                                    userLatitude: false,
+                                                });
+                                            }
+                                        }}
                                     />
                                     <label
                                         className={styles.innerLabel}
@@ -298,6 +367,11 @@ export default function Home() {
                                             Latitude format is invalid.
                                         </p>
                                     )}
+                                    {emptyErrors.userLatitude && (
+                                        <p className={styles.errorMessage}>
+                                            This field is required.
+                                        </p>
+                                    )}
                                 </div>
                                 <div className={styles.inputWrapper}>
                                     <input
@@ -313,12 +387,18 @@ export default function Home() {
                                                 setUserLongitudeInputError
                                             )
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             setUserLocation({
                                                 ...userLocation,
                                                 longitude: e.target.value,
-                                            })
-                                        }
+                                            });
+                                            if (emptyErrors.userLongitude) {
+                                                setEmptyErrors({
+                                                    ...emptyErrors,
+                                                    userLongitude: false,
+                                                });
+                                            }
+                                        }}
                                     />
                                     <label
                                         className={styles.innerLabel}
@@ -336,6 +416,11 @@ export default function Home() {
                                     {userLongitudeError && (
                                         <p className={styles.errorMessage}>
                                             Longitude format is invalid.
+                                        </p>
+                                    )}
+                                    {emptyErrors.userLongitude && (
+                                        <p className={styles.errorMessage}>
+                                            This field is required.
                                         </p>
                                     )}
                                 </div>
