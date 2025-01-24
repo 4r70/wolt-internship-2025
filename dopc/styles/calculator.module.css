@@ -127,6 +127,7 @@
     transition: all .2s ease-in;
 }
 
+/* Subtle spring animation for the success text */
 @keyframes spring {
     0% {
         transform: translate(0, -.5rem);
