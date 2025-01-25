@@ -186,6 +186,7 @@ export default function details({
                 <button
                     className={styles.primaryButton}
                     onClick={() => calculateDeliveryPrice()}
+                    data-test-id="calculateDeliveryPrice"
                 >
                     Calculate delivery price
                 </button>

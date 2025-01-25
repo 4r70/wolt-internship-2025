@@ -91,7 +91,7 @@ export default function cartValueInput({
             </label>
             {cartUserInputError && (
                 <p className={styles.errorMessage}>
-                    Input the cart value using only numbers and an optional dot.
+                    Please input the cart value using only numbers and an optional dot.
                 </p>
             )}
             {cartUserValueError && (

@@ -111,6 +111,7 @@
 .errorMessage {
     color: var(--color-negative);
     font-size: var(--font-size-xs);
+    max-width: 40ch;
 }
 
 .successMessage {

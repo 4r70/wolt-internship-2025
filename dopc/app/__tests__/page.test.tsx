@@ -6,6 +6,5 @@ describe('Delivery Order Price Calculator', () => {
   test('renders Home page', () => {
     render(<Page />)
     expect(screen.getByText('Delivery Order Price Calculator')).toBeInTheDocument()
-    
   })
 })

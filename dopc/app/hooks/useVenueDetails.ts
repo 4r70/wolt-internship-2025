@@ -86,7 +86,7 @@ export function useVenueDetails(venueSlug: string) {
                 setError(false);
             } catch (error) {
                 setError(true);
-                console.error("Error fetching venue details:", error);
+                console.log("Error fetching venue details:", error);
             }
         }
         fetchVenueDetails(debouncedVenueSlug);

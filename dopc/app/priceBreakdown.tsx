@@ -28,6 +28,7 @@ export default function priceBreakdown({
                     <dd
                         className={styles.priceBreakdownValue}
                         data-raw-value={rawValues.cartValue}
+                        data-test-id="breakdownCartValue"
                     >
                         {cartValue.toFixed(2)} €
                     </dd>
@@ -39,6 +40,7 @@ export default function priceBreakdown({
                     <dd
                         className={styles.priceBreakdownValue}
                         data-raw-value={rawValues.smallOrderSurcharge}
+                        data-test-id="smallOrderSurcharge"
                     >
                         {smallOrderSurcharge.toFixed(2)} €
                     </dd>
@@ -50,6 +52,7 @@ export default function priceBreakdown({
                     <dd
                         className={styles.priceBreakdownValue}
                         data-raw-value={rawValues.deliveryDistance}
+                        data-test-id="deliveryDistance"
                     >
                         {deliveryDistance} m
                     </dd>
@@ -61,6 +64,7 @@ export default function priceBreakdown({
                     <dd
                         className={styles.priceBreakdownValue}
                         data-raw-value={rawValues.deliveryFee}
+                        data-test-id="deliveryFee"
                     >
                         {deliveryFee.toFixed(2)} €
                     </dd>
@@ -72,6 +76,7 @@ export default function priceBreakdown({
                     <dd
                         className={styles.priceBreakdownValueTotal}
                         data-raw-value={rawValues.total}
+                        data-test-id="total"
                     >
                         {total.toFixed(2)} €
                     </dd>

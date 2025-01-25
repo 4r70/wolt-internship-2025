@@ -136,7 +136,7 @@ export default function locationInput({
                 </label>
                 {userLatitudeInputError && (
                     <p className={styles.errorMessage}>
-                        Input the latitude using only numbers <br /> from -90 to
+                        Please input the latitude using only numbers from -90 to
                         90 and an optional dot.
                     </p>
                 )}
@@ -183,7 +183,7 @@ export default function locationInput({
                 </label>
                 {userLongitudeInputError && (
                     <p className={styles.errorMessage}>
-                        Input the longitude using only numbers <br /> from -180
+                        Please input the longitude using only numbers from -180
                         to 180 and an optional dot.
                     </p>
                 )}
