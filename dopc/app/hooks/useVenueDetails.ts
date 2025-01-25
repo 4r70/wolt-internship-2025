@@ -33,9 +33,9 @@ export function useVenueDetails(venueSlug: string) {
                     `https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues/${debouncedVenueSlug}/static`
                 );
                 if (!staticResponse.ok) {
-                    throw new Error(
-                        `Static API error: ${staticResponse.status}`
-                    );
+                    console.log(`Static API error: ${staticResponse.status}`);
+                    setError(true);
+                    return;
                 }
                 const staticData = await staticResponse.json();
 
@@ -47,9 +47,9 @@ export function useVenueDetails(venueSlug: string) {
                         longitude: staticData.venue_raw.location.coordinates[0],
                     });
                 } else {
-                    throw new Error(
-                        "Invalid location data from the static API."
-                    );
+                    console.log("Invalid location data from the static API.");
+                    setError(true);
+                    return;
                 }
 
                 // fetch other data
@@ -57,9 +57,11 @@ export function useVenueDetails(venueSlug: string) {
                     `https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues/${debouncedVenueSlug}/dynamic`
                 );
                 if (!dynamicResponse.ok) {
-                    throw new Error(
+                    console.log(
                         `Dynamic API error: ${dynamicResponse.statusText}`
                     );
+                    setError(true);
+                    return;
                 }
                 const dynamicData = await dynamicResponse.json();
 
@@ -74,9 +76,11 @@ export function useVenueDetails(venueSlug: string) {
                             deliverySpecs.delivery_pricing.distance_ranges,
                     });
                 } else {
-                    throw new Error(
+                    console.log(
                         "Invalid delivery data from the dynamic API."
                     );
+                    setError(true);
+                    return;
                 }
 
                 setError(false);
