@@ -85,5 +85,7 @@ You will see the info related to the tests in the terminal.
 
 The test files are located in ```wolt-internship-2025/dopc/app/__tests__```.
 
+Note: This was my first time writing tests and this is definitely one of my weakest points.
+
 ## Final words
 Thank you for reviewing my submission! I welcome any feedback and would be happy to address further questions.
